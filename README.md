@@ -7,6 +7,13 @@
 
 ## Setup
 
+### Build code for Lambda
+
+```bash
+cd go-src
+go build -o tower
+```
+
 ### Configure infrastructure
 
 ```bash

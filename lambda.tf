@@ -1,13 +1,13 @@
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/src"
+  source_dir  = "${path.module}/go-src/"
   output_path = "${path.module}/auto-staging-tower.zip"
 }
 
 resource "aws_lambda_function" "lambda" {
   function_name    = "auto-staging-tower"
-  handler          = "index.lambda_handler"
-  runtime          = "python3.6"
+  handler          = "tower"
+  runtime          = "go1.x"
   filename         = "${path.module}/auto-staging-tower.zip"
   source_code_hash = "${data.archive_file.lambda.output_base64sha256}"
   role             = "${aws_iam_role.lambda_exec_role.arn}"
