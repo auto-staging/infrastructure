@@ -1,12 +1,12 @@
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/go-src/"
+  source_dir  = "${path.module}/go-src/bin/"
   output_path = "${path.module}/auto-staging-tower.zip"
 }
 
 resource "aws_lambda_function" "lambda" {
   function_name    = "auto-staging-tower"
-  handler          = "tower"
+  handler          = "auto-staging-tower"
   runtime          = "go1.x"
   filename         = "${path.module}/auto-staging-tower.zip"
   source_code_hash = "${data.archive_file.lambda.output_base64sha256}"
@@ -48,7 +48,8 @@ resource "aws_iam_policy" "lambda_execution" {
            "Action": [
            "logs:CreateLogGroup",
            "logs:CreateLogStream",
-           "logs:PutLogEvents"
+           "logs:PutLogEvents",
+           "dynamodb:*"
            ],
            "Resource": "*"
        }
