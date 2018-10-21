@@ -1,0 +1,849 @@
+openapi: 3.0.0
+
+info:
+  description: auto-staging-tower API
+  version: "1.0.0"
+  title:  Auto Staging Tower API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: tower-configuration
+    description: Configuration of auto-staging
+  - name: repositories
+    description: Operations to manage repositories used for auto-staging
+  - name: environment
+    description: Configuration the auto-staging environments for each repository
+  - name: environment-status
+    description: Status of all staging environments
+  - name: environment-configuration
+    description: Configuration of all environments
+paths:
+  /repositories/environments/status:
+    get:
+      tags:
+        - environment-status
+      summary: Get all environments with status related informations
+      operationId: getAllStatus
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: query
+          name: state
+          description: pass an optional state string to filter the results
+          required: false
+          schema:
+            type: string
+            enum:
+              - running
+              - stopped
+              - pending
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnvironmentStatus'
+        '400':
+          description: bad input parameter
+
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+          
+  /repositories/{name}/environments/{branch}/status:
+    get:
+      tags:
+        - environment-status
+      summary: Get a single environments with status related informations
+      operationId: getSingleStatus
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Name of the repository where the branch is located in  environment to get the status for
+      
+        - in: path
+          name: branch
+          schema:
+            type: string
+          required: true
+          description: Name of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the criterias
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentStatus'
+        '404':
+          description: no environment for name or branch
+      
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+          
+  /configuration:
+    get:
+      tags:
+        - tower-configuration
+      summary: Get the current Tower configuration
+      operationId: getTowerConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TowerConfiguration'
+                
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+        
+    put:
+      tags:
+        - tower-configuration
+      summary: Update the Tower configuration
+      operationId: updateTowerConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TowerConfiguration'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TowerConfiguration'
+        description: Reconfigure Tower
+      
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+          
+  /repositories/environments/configuration:
+    get:
+      tags:
+        - environment-configuration
+      summary: Get the general configuration for all environments of all repositories, will be overwritten by the environment specific
+      operationId: getGeneralEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+                  
+    put:
+      tags:
+        - environment-configuration
+      summary: Update the general configuration for all environments of all repositories
+      operationId: updateGeneralEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+        '400':
+          description: bad input parameter
+          
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+          
+    
+  /repositories/{name}/environments/{branch}/configuration:
+    get:
+      tags:
+        - environment-configuration
+      summary: Get the configuration of a single evnrionment
+      operationId: getSingleEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Name of the repository where the branch is located in  environment to get the status for
+      
+        - in: path
+          name: branch
+          schema:
+            type: string
+          required: true
+          description: Name of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+        '404':
+          description: no environment for id
+          
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+      
+    put:
+      tags:
+        - environment-configuration
+      summary: Update the single environment configuration
+      operationId: updateSingleEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Name of the repository where the branch is located in  environment to get the status for
+      
+        - in: path
+          name: branch
+          schema:
+            type: string
+          required: true
+          description: Name of the environment to get the status for
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+      
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+              
+  /repositories:
+    get:
+      tags:
+        - repositories
+      summary: Get all repositories configured in auto-staging
+      operationId: getAllRepoConfigurations
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+        '404':
+          description: no environment for id
+          
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+    
+    post:
+      tags:
+        - repositories
+      summary: Add repository for auto-staging
+      operationId: addRepoConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the environment to update the configuration for
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+              
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+        
+  /repositories/{name}:
+    get:
+      tags:
+        - repositories
+      summary: Get a single environments with status related informations
+      operationId: getEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repository'
+        '404':
+          description: no environment for id
+          
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+      
+    put:
+      tags:
+        - repositories
+      summary: Update the single environment configuration
+      operationId: updateEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the environment to update the configuration for
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+              
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+
+    delete:
+      tags:
+        - repositories
+      summary: Get a single environments with status related informations
+      operationId: getEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+                
+  /repositories/{name}/environments:
+    get:
+      tags:
+        - environment
+      summary: Get all repositories configured in auto-staging
+      operationId: getAllRepoConfigurations
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '404':
+          description: no environment for id
+          
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+    
+    post:
+      tags:
+        - environment
+      summary: Add repository for auto-staging
+      operationId: addRepoConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the environment to update the configuration for
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentBody'
+              
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+        
+  /repositories/{name}/environments/{branch}:
+    get:
+      tags:
+        - environment
+      summary: Get a single environments with status related informations
+      operationId: getEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Name of the repository where the branch is located in  environment to get the status for
+      
+        - in: path
+          name: branch
+          schema:
+            type: string
+          required: true
+          description: Name of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '404':
+          description: no environment for id
+      
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+      
+    put:
+      tags:
+        - environment
+      summary: Update the single environment configuration
+      operationId: updateEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Name of the repository where the branch is located in  environment to get the status for
+      
+        - in: path
+          name: branch
+          schema:
+            type: string
+          required: true
+          description: Name of the environment to get the status for
+      responses:
+        '200':
+          description: current configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentBody'
+              
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+
+    delete:
+      tags:
+        - environment
+      summary: Get a single environments with status related informations
+      operationId: getEnvironmentConfiguration
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Name of the repository where the branch is located in  environment to get the status for
+      
+        - in: path
+          name: branch
+          schema:
+            type: string
+          required: true
+          description: Name of the environment to get the status for
+      responses:
+        '200':
+          description: status for the environment matching the id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+              
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
+        credentials: ${tower_lambda_execution_role_arn}
+        httpMethod: POST
+        responses:
+          "default":
+            statusCode: "200"
+          "BAD.*":
+            statusCode: "400"
+          "INT.*":
+            statusCode: "500"
+
+components:
+  schemas:
+    TowerConfiguration:
+      type: object
+      #required:
+      #  - test
+        
+      properties:
+        logLevel:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 4
+          
+    Repository:
+      type: object
+      properties:
+        repository:
+          type: string
+        webhook:
+          type: boolean
+          
+    Environment:
+      type: object
+      properties:
+        branch:
+          type: string
+        creationDate:
+          type: string
+          format: int32
+    
+    EnvironmentStatus:
+      type: object
+      properties:
+        repository:
+          type: string
+        branch:
+          type: string
+        state:
+          type: string
+    
+    EnvironmentBody:
+      type: object
+      required:
+        - branch
+      
+      properties:
+        branch:
+          type: string
+  
+    EnvironmentGeneralConfiguration:
+      type: object
+      #required:
+      #  - schedules
+        
+      properties:
+        shutdownSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        startupSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+          
+    EnvironmentSingleConfiguration:
+      type: object
+      #required:
+      #  - schedules
+        
+      properties:
+        shutdownSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        startupSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        
+    TimeSchedule:
+      type: object
+      required:
+        - cron
+        
+      properties:
+        cron:
+          type: string
+    
