@@ -326,7 +326,7 @@ paths:
       tags:
         - repositories
       summary: Get all repositories configured in auto-staging
-      operationId: getAllRepoConfigurations
+      operationId: getAllRepositoryConfigurations
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -343,7 +343,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                $ref: '#/components/schemas/Repository'
         '404':
           description: no environment for id
       x-amazon-apigateway-integration:
@@ -362,7 +362,7 @@ paths:
       tags:
         - repositories
       summary: Add repository for auto-staging
-      operationId: addRepoConfiguration
+      operationId: addRepositoryConfiguration
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -379,14 +379,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                $ref: '#/components/schemas/Repository'
         '400':
           description: bad input parameter
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+              $ref: '#/components/schemas/RepositoryBody'
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -405,7 +405,7 @@ paths:
       tags:
         - repositories
       summary: Get a single environments with status related informations
-      operationId: getEnvironmentConfiguration
+      operationId: getSingleRepositoryConfiguration
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -441,7 +441,7 @@ paths:
       tags:
         - repositories
       summary: Update the single environment configuration
-      operationId: updateEnvironmentConfiguration
+      operationId: updateSingleRepositoryConfiguration
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -458,14 +458,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                $ref: '#/components/schemas/Repository'
         '400':
           description: bad input parameter
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+              $ref: '#/components/schemas/RepositoryBody'
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -483,7 +483,7 @@ paths:
       tags:
         - repositories
       summary: Get a single environments with status related informations
-      operationId: getEnvironmentConfiguration
+      operationId: deleteSingleRepositoryConfiguration
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -500,7 +500,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                $ref: '#/components/schemas/Repository'
       x-amazon-apigateway-integration:
         type: aws_proxy
         uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
@@ -518,7 +518,7 @@ paths:
       tags:
         - environment
       summary: Get all repositories configured in auto-staging
-      operationId: getAllRepoConfigurations
+      operationId: getAllEnvironmentsForRepository
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -554,7 +554,7 @@ paths:
       tags:
         - environment
       summary: Add repository for auto-staging
-      operationId: addRepoConfiguration
+      operationId: addEnvironmentForRepository
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -597,7 +597,7 @@ paths:
       tags:
         - environment
       summary: Get a single environments with status related informations
-      operationId: getEnvironmentConfiguration
+      operationId: getSingleEnvironmentConfiguration
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -639,7 +639,7 @@ paths:
       tags:
         - environment
       summary: Update the single environment configuration
-      operationId: updateEnvironmentConfiguration
+      operationId: updateSingleEnvironmentConfiguration
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -687,7 +687,7 @@ paths:
       tags:
         - environment
       summary: Get a single environments with status related informations
-      operationId: getEnvironmentConfiguration
+      operationId: deleteSingleEnvironmentConfiguration
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -734,6 +734,13 @@ components:
           minimum: 1
           maximum: 4
     Repository:
+      type: object
+      properties:
+        repository:
+          type: string
+        webhook:
+          type: boolean
+    RepositoryBody:
       type: object
       properties:
         repository:
