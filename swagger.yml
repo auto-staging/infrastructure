@@ -1,9 +1,8 @@
 openapi: 3.0.0
-
 info:
   description: auto-staging-tower API
-  version: "1.0.0"
-  title:  Auto Staging Tower API
+  version: 1.0.0
+  title: Auto Staging Tower API
   contact:
     email: you@your-company.com
   license:
@@ -20,6 +19,7 @@ tags:
     description: Status of all staging environments
   - name: environment-configuration
     description: Configuration of all environments
+
 paths:
   /repositories/environments/status:
     get:
@@ -52,21 +52,19 @@ paths:
                   $ref: '#/components/schemas/EnvironmentStatus'
         '400':
           description: bad input parameter
-
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-          
-  /repositories/{name}/environments/{branch}/status:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+  '/repositories/{name}/environments/{branch}/status':
     get:
       tags:
         - environment-status
@@ -82,7 +80,6 @@ paths:
             type: string
           required: true
           description: Name of the repository where the branch is located in  environment to get the status for
-      
         - in: path
           name: branch
           schema:
@@ -98,20 +95,18 @@ paths:
                 $ref: '#/components/schemas/EnvironmentStatus'
         '404':
           description: no environment for name or branch
-      
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-          
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
   /configuration:
     get:
       tags:
@@ -128,20 +123,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TowerConfiguration'
-                
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-        
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     put:
       tags:
         - tower-configuration
@@ -165,25 +158,25 @@ paths:
             schema:
               $ref: '#/components/schemas/TowerConfiguration'
         description: Reconfigure Tower
-      
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-          
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+  
   /repositories/environments/configuration:
     get:
       tags:
         - environment-configuration
-      summary: Get the general configuration for all environments of all repositories, will be overwritten by the environment specific
+      summary: 'Get the general configuration for all environments of all repositories, will be overwritten by the environment specific'
       operationId: getGeneralEnvironmentConfiguration
       description: |
         By passing in the appropriate options, you can search for
@@ -195,20 +188,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-                
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-                  
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     put:
       tags:
         - environment-configuration
@@ -226,22 +217,20 @@ paths:
                 $ref: '#/components/schemas/EnvironmentSingleConfiguration'
         '400':
           description: bad input parameter
-          
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-          
-    
-  /repositories/{name}/environments/{branch}/configuration:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+  '/repositories/{name}/environments/{branch}/configuration':
     get:
       tags:
         - environment-configuration
@@ -257,7 +246,6 @@ paths:
             type: string
           required: true
           description: Name of the repository where the branch is located in  environment to get the status for
-      
         - in: path
           name: branch
           schema:
@@ -273,20 +261,18 @@ paths:
                 $ref: '#/components/schemas/EnvironmentSingleConfiguration'
         '404':
           description: no environment for id
-          
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-      
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     put:
       tags:
         - environment-configuration
@@ -302,7 +288,6 @@ paths:
             type: string
           required: true
           description: Name of the repository where the branch is located in  environment to get the status for
-      
         - in: path
           name: branch
           schema:
@@ -323,20 +308,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-      
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-              
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
   /repositories:
     get:
       tags:
@@ -362,20 +346,18 @@ paths:
                 $ref: '#/components/schemas/EnvironmentSingleConfiguration'
         '404':
           description: no environment for id
-          
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-    
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     post:
       tags:
         - repositories
@@ -405,21 +387,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-              
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-        
-  /repositories/{name}:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+  '/repositories/{name}':
     get:
       tags:
         - repositories
@@ -444,20 +425,18 @@ paths:
                 $ref: '#/components/schemas/Repository'
         '404':
           description: no environment for id
-          
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-      
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     put:
       tags:
         - repositories
@@ -487,20 +466,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-              
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     delete:
       tags:
         - repositories
@@ -523,21 +501,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-                
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-                
-  /repositories/{name}/environments:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+  '/repositories/{name}/environments':
     get:
       tags:
         - environment
@@ -562,20 +538,18 @@ paths:
                 $ref: '#/components/schemas/Environment'
         '404':
           description: no environment for id
-          
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-    
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     post:
       tags:
         - environment
@@ -605,21 +579,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/EnvironmentBody'
-              
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-        
-  /repositories/{name}/environments/{branch}:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+  '/repositories/{name}/environments/{branch}':
     get:
       tags:
         - environment
@@ -635,7 +608,6 @@ paths:
             type: string
           required: true
           description: Name of the repository where the branch is located in  environment to get the status for
-      
         - in: path
           name: branch
           schema:
@@ -651,20 +623,18 @@ paths:
                 $ref: '#/components/schemas/Environment'
         '404':
           description: no environment for id
-      
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-      
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     put:
       tags:
         - environment
@@ -680,7 +650,6 @@ paths:
             type: string
           required: true
           description: Name of the repository where the branch is located in  environment to get the status for
-      
         - in: path
           name: branch
           schema:
@@ -701,20 +670,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/EnvironmentBody'
-              
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
     delete:
       tags:
         - environment
@@ -730,7 +698,6 @@ paths:
             type: string
           required: true
           description: Name of the repository where the branch is located in  environment to get the status for
-      
         - in: path
           name: branch
           schema:
@@ -744,34 +711,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Environment'
-              
       x-amazon-apigateway-integration:
         type: aws_proxy
-        uri: arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations
-        credentials: ${tower_lambda_execution_role_arn}
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
         httpMethod: POST
         responses:
-          "default":
-            statusCode: "200"
-          "BAD.*":
-            statusCode: "400"
-          "INT.*":
-            statusCode: "500"
-
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
 components:
   schemas:
     TowerConfiguration:
       type: object
-      #required:
-      #  - test
-        
       properties:
         logLevel:
           type: integer
-          format: int32
+          format: int
           minimum: 1
           maximum: 4
-          
     Repository:
       type: object
       properties:
@@ -779,7 +740,6 @@ components:
           type: string
         webhook:
           type: boolean
-          
     Environment:
       type: object
       properties:
@@ -788,7 +748,6 @@ components:
         creationDate:
           type: string
           format: int32
-    
     EnvironmentStatus:
       type: object
       properties:
@@ -798,21 +757,15 @@ components:
           type: string
         state:
           type: string
-    
     EnvironmentBody:
       type: object
       required:
         - branch
-      
       properties:
         branch:
           type: string
-  
     EnvironmentGeneralConfiguration:
       type: object
-      #required:
-      #  - schedules
-        
       properties:
         shutdownSchedules:
           type: array
@@ -822,12 +775,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
-          
     EnvironmentSingleConfiguration:
       type: object
-      #required:
-      #  - schedules
-        
       properties:
         shutdownSchedules:
           type: array
@@ -837,13 +786,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
-        
     TimeSchedule:
       type: object
       required:
         - cron
-        
       properties:
         cron:
           type: string
-    
+
+x-amazon-apigateway-request-validators:
+  Validate body, query string parameters, and headers:
+    validateRequestParameters: true
+    validateRequestBody: true
