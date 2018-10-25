@@ -330,22 +330,15 @@ paths:
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
-      parameters:
-        - in: path
-          name: name
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the environment to get the status for
       responses:
         '200':
           description: status for the environment matching the id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Repository'
-        '404':
-          description: no environment for id
+                type: array
+                items:
+                  $ref: '#/components/schemas/Repository'
       x-amazon-apigateway-integration:
         type: aws_proxy
         uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
@@ -366,13 +359,6 @@ paths:
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
-      parameters:
-        - in: path
-          name: name
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the environment to update the configuration for
       responses:
         '200':
           description: current configuration
@@ -386,7 +372,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RepositoryBody'
+              $ref: '#/components/schemas/Repository'
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -740,6 +726,10 @@ components:
           type: string
         webhook:
           type: boolean
+        filters:
+          type: array
+          items:
+            type: string
     RepositoryBody:
       type: object
       properties:
