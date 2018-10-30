@@ -12,6 +12,12 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = "${data.archive_file.lambda.output_base64sha256}"
   role             = "${aws_iam_role.lambda_exec_role.arn}"
   timeout          = 300
+
+  environment = {
+    variables = {
+      CONFIGURATION_LOG_LEVEL = 3
+    }
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "CloudWatchLogFullAccess" {
@@ -49,7 +55,8 @@ resource "aws_iam_policy" "lambda_execution" {
            "logs:CreateLogGroup",
            "logs:CreateLogStream",
            "logs:PutLogEvents",
-           "dynamodb:*"
+           "dynamodb:*",
+           "lambda:UpdateFunctionConfiguration"
            ],
            "Resource": "*"
        }
