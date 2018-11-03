@@ -17,8 +17,6 @@ tags:
     description: Configuration the auto-staging environments for each repository
   - name: environment-status
     description: Status of all staging environments
-  - name: environment-configuration
-    description: Configuration of all environments
 
 paths:
   /repositories/environments/status:
@@ -27,9 +25,6 @@ paths:
         - environment-status
       summary: Get all environments with status related informations
       operationId: getAllStatus
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: query
           name: state
@@ -40,10 +35,16 @@ paths:
             enum:
               - running
               - stopped
+              - destroying
+              - destroyed
+              - destroying-failed
               - pending
+              - ready
+              - deploying
+              - deployment-failed
       responses:
         '200':
-          description: search results matching criteria
+          description: state results matching the query
           content:
             application/json:
               schema:
@@ -64,22 +65,20 @@ paths:
             statusCode: '400'
           INT.*:
             statusCode: '500'
+
   '/repositories/{name}/environments/{branch}/status':
     get:
       tags:
         - environment-status
-      summary: Get a single environments with status related informations
+      summary: Get the status related informations for a single environment
       operationId: getSingleStatus
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
             type: string
           required: true
-          description: Name of the repository where the branch is located in  environment to get the status for
+          description: Name of the repository where the branch is located in
         - in: path
           name: branch
           schema:
@@ -107,15 +106,13 @@ paths:
             statusCode: '400'
           INT.*:
             statusCode: '500'
+
   /configuration:
     get:
       tags:
         - tower-configuration
       summary: Get the current Tower configuration
       operationId: getTowerConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       responses:
         '200':
           description: current configuration
@@ -140,9 +137,6 @@ paths:
         - tower-configuration
       summary: Update the Tower configuration
       operationId: updateTowerConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       responses:
         '200':
           description: current configuration
@@ -153,6 +147,7 @@ paths:
         '400':
           description: bad input parameter
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -172,18 +167,15 @@ paths:
           INT.*:
             statusCode: '500'
   
-  /repositories/environments/configuration:
+  /repositories/environments:
     get:
       tags:
-        - environment-configuration
-      summary: 'Get the general configuration for all environments of all repositories, will be overwritten by the environment specific'
+        - environment
+      summary: 'Get the current default configuration for all environments of all repositories, will be overwritten by environment specific configuration'
       operationId: getGeneralEnvironmentConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       responses:
         '200':
-          description: search results matching criteria
+          description: current default configuration
           content:
             application/json:
               schema:
@@ -202,112 +194,24 @@ paths:
             statusCode: '500'
     put:
       tags:
-        - environment-configuration
+        - environment
       summary: Update the general configuration for all environments of all repositories
       operationId: updateGeneralEnvironmentConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
-      responses:
-        '200':
-          description: current configuration
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-        '400':
-          description: bad input parameter
-      x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
-      x-amazon-apigateway-integration:
-        type: aws_proxy
-        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
-        credentials: '${tower_lambda_execution_role_arn}'
-        httpMethod: POST
-        responses:
-          default:
-            statusCode: '200'
-          BAD.*:
-            statusCode: '400'
-          INT.*:
-            statusCode: '500'
-  '/repositories/{name}/environments/{branch}/configuration':
-    get:
-      tags:
-        - environment-configuration
-      summary: Get the configuration of a single evnrionment
-      operationId: getSingleEnvironmentConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
-      parameters:
-        - in: path
-          name: name
-          schema:
-            type: string
-          required: true
-          description: Name of the repository where the branch is located in  environment to get the status for
-        - in: path
-          name: branch
-          schema:
-            type: string
-          required: true
-          description: Name of the environment to get the status for
-      responses:
-        '200':
-          description: status for the environment matching the id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-        '404':
-          description: no environment for id
-      x-amazon-apigateway-integration:
-        type: aws_proxy
-        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
-        credentials: '${tower_lambda_execution_role_arn}'
-        httpMethod: POST
-        responses:
-          default:
-            statusCode: '200'
-          BAD.*:
-            statusCode: '400'
-          INT.*:
-            statusCode: '500'
-    put:
-      tags:
-        - environment-configuration
-      summary: Update the single environment configuration
-      operationId: updateSingleEnvironmentConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
-      parameters:
-        - in: path
-          name: name
-          schema:
-            type: string
-          required: true
-          description: Name of the repository where the branch is located in  environment to get the status for
-        - in: path
-          name: branch
-          schema:
-            type: string
-          required: true
-          description: Name of the environment to get the status for
-      responses:
-        '200':
-          description: current configuration
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
-        '400':
-          description: bad input parameter
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+              $ref: '#/components/schemas/EnvironmentPutBody'
+      responses:
+        '200':
+          description: default configuration after update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+        '400':
+          description: bad input parameter
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -321,18 +225,16 @@ paths:
             statusCode: '400'
           INT.*:
             statusCode: '500'
+
   /repositories:
     get:
       tags:
         - repositories
       summary: Get all repositories configured in auto-staging
       operationId: getAllRepositoryConfigurations
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       responses:
         '200':
-          description: status for the environment matching the id
+          description: all repositories configured in auto-staging
           content:
             application/json:
               schema:
@@ -356,12 +258,9 @@ paths:
         - repositories
       summary: Add repository for auto-staging
       operationId: addRepositoryConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       responses:
-        '200':
-          description: current configuration
+        '201':
+          description: new repository added
           content:
             application/json:
               schema:
@@ -369,6 +268,7 @@ paths:
         '400':
           description: bad input parameter
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -390,21 +290,18 @@ paths:
     get:
       tags:
         - repositories
-      summary: Get a single environments with status related informations
+      summary: Get a repository with its configuration 
       operationId: getSingleRepositoryConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
-            type: integer
+            type: string
           required: true
-          description: Numeric ID of the environment to get the status for
+          description: Name of the repository
       responses:
         '200':
-          description: status for the environment matching the id
+          description: configuration for the repository matching the name
           content:
             application/json:
               schema:
@@ -426,21 +323,18 @@ paths:
     put:
       tags:
         - repositories
-      summary: Update the single environment configuration
+      summary: Update single repository configuration
       operationId: updateSingleRepositoryConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
-            type: integer
+            type: string
           required: true
-          description: Numeric ID of the environment to update the configuration for
+          description: Name of the repository
       responses:
         '200':
-          description: current configuration
+          description: configuration after update
           content:
             application/json:
               schema:
@@ -448,6 +342,7 @@ paths:
         '400':
           description: bad input parameter
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -468,25 +363,20 @@ paths:
     delete:
       tags:
         - repositories
-      summary: Get a single environments with status related informations
+      summary: Delete single repository and all included environments
       operationId: deleteSingleRepositoryConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
-            type: integer
+            type: string
           required: true
-          description: Numeric ID of the environment to get the status for
+          description: Name of the repository
       responses:
-        '200':
-          description: status for the environment matching the id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Repository'
+        '204':
+          description: repository removed
+        '404':
+          description: no repository for name found
       x-amazon-apigateway-integration:
         type: aws_proxy
         uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
@@ -499,31 +389,31 @@ paths:
             statusCode: '400'
           INT.*:
             statusCode: '500'
+
   '/repositories/{name}/environments':
     get:
       tags:
         - environment
-      summary: Get all repositories configured in auto-staging
+      summary: Get all environments configured for the repository
       operationId: getAllEnvironmentsForRepository
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
-            type: integer
+            type: string
           required: true
-          description: Numeric ID of the environment to get the status for
+          description: Name of the repository
       responses:
         '200':
-          description: status for the environment matching the id
+          description: all environments created in the repository with the provided name
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Environment'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Environment'
         '404':
-          description: no environment for id
+          description: no environments for repository found
       x-amazon-apigateway-integration:
         type: aws_proxy
         uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
@@ -539,32 +429,30 @@ paths:
     post:
       tags:
         - environment
-      summary: Add repository for auto-staging
+      summary: Manually add environment for auto-staging
       operationId: addEnvironmentForRepository
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
-            type: integer
+            type: string
           required: true
-          description: Numeric ID of the environment to update the configuration for
+          description: Name of the repository
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentPostBody'
       responses:
-        '200':
-          description: current configuration
+        '201':
+          description: environment configuration after the creation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Environment'
         '400':
           description: bad input parameter
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EnvironmentBody'
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -582,33 +470,30 @@ paths:
     get:
       tags:
         - environment
-      summary: Get a single environments with status related informations
+      summary: Get a single environments with config and status related informations
       operationId: getSingleEnvironmentConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
             type: string
           required: true
-          description: Name of the repository where the branch is located in  environment to get the status for
+          description: Name of the repository where the branch is located in
         - in: path
           name: branch
           schema:
             type: string
           required: true
-          description: Name of the environment to get the status for
+          description: Name of the environment to get the configuration and state for
       responses:
         '200':
-          description: status for the environment matching the id
+          description: environment configuration and status information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Environment'
         '404':
-          description: no environment for id
+          description: no environment for parameters found
       x-amazon-apigateway-integration:
         type: aws_proxy
         uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
@@ -624,38 +509,36 @@ paths:
     put:
       tags:
         - environment
-      summary: Update the single environment configuration
+      summary: Update the configuration for a single environment
       operationId: updateSingleEnvironmentConfiguration
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
       parameters:
         - in: path
           name: name
           schema:
             type: string
           required: true
-          description: Name of the repository where the branch is located in  environment to get the status for
+          description: Name of the repository where the branch is located in
         - in: path
           name: branch
           schema:
             type: string
           required: true
-          description: Name of the environment to get the status for
+          description: Name of the environment to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentPutBody'
       responses:
         '200':
-          description: current configuration
+          description: environment confoguration and status after the update
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Environment'
         '400':
           description: bad input parameter
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EnvironmentBody'
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -669,10 +552,11 @@ paths:
             statusCode: '400'
           INT.*:
             statusCode: '500'
+
     delete:
       tags:
         - environment
-      summary: Get a single environments with status related informations
+      summary: Delete a single environment
       operationId: deleteSingleEnvironmentConfiguration
       description: |
         By passing in the appropriate options, you can search for
@@ -683,20 +567,18 @@ paths:
           schema:
             type: string
           required: true
-          description: Name of the repository where the branch is located in  environment to get the status for
+          description: Name of the repository where the branch is located in
         - in: path
           name: branch
           schema:
             type: string
           required: true
-          description: Name of the environment to get the status for
+          description: Name of the environment to delete
       responses:
-        '200':
-          description: status for the environment matching the id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Environment'
+        '204':
+          description: environment successfully deleted
+        '404':
+          description: no environment for parameters found
       x-amazon-apigateway-integration:
         type: aws_proxy
         uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
@@ -730,13 +612,31 @@ components:
           type: array
           items:
             type: string
+        shutdownSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        startupSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
     RepositoryBody:
       type: object
       properties:
-        repository:
-          type: string
         webhook:
           type: boolean
+        filters:
+          type: array
+          items:
+            type: string
+        shutdownSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        startupSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
     Environment:
       type: object
       properties:
@@ -745,6 +645,26 @@ components:
         creationDate:
           type: string
           format: int32
+        state:
+          type: string
+          enum:
+            - running
+            - stopped
+            - destroying
+            - destroyed
+            - destroying-failed
+            - pending
+            - ready
+            - deploying
+            - deployment-failed
+        shutdownSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        startupSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
     EnvironmentStatus:
       type: object
       properties:
@@ -754,14 +674,32 @@ components:
           type: string
         state:
           type: string
-    EnvironmentBody:
+          enum:
+            - running
+            - stopped
+            - destroying
+            - destroyed
+            - destroying-failed
+            - pending
+            - ready
+            - deploying
+            - deployment-failed
+    EnvironmentPostBody:
       type: object
       required:
         - branch
       properties:
         branch:
           type: string
-    EnvironmentGeneralConfiguration:
+        shutdownSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        startupSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+    EnvironmentPutBody:
       type: object
       properties:
         shutdownSchedules:
@@ -772,6 +710,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+
     EnvironmentSingleConfiguration:
       type: object
       properties:
