@@ -272,7 +272,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Repository'
+              $ref: '#/components/schemas/RepositoryPostBody'
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -346,7 +346,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RepositoryBody'
+              $ref: '#/components/schemas/RepositoryPutBody'
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
       x-amazon-apigateway-integration:
         type: aws_proxy
@@ -601,6 +601,7 @@ components:
           format: int
           minimum: 1
           maximum: 4
+
     Repository:
       type: object
       properties:
@@ -620,7 +621,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
-    RepositoryBody:
+
+    RepositoryPostBody:
+      type: object
+      required:
+        - repository
+      properties:
+        repository:
+          type: string
+        webhook:
+          type: boolean
+        filters:
+          type: array
+          items:
+            type: string
+        shutdownSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+        startupSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSchedule'
+    
+    RepositoryPutBody:
       type: object
       properties:
         webhook:
@@ -637,6 +661,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+
     Environment:
       type: object
       properties:
