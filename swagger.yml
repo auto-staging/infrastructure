@@ -170,7 +170,7 @@ paths:
   /repositories/environments:
     get:
       tags:
-        - environment
+        - environment-global-config
       summary: 'Get the current default configuration for all environments of all repositories, will be overwritten by environment specific configuration'
       operationId: getGeneralEnvironmentConfiguration
       responses:
@@ -194,7 +194,7 @@ paths:
             statusCode: '500'
     put:
       tags:
-        - environment
+        - environment-global-config
       summary: Update the general configuration for all environments of all repositories
       operationId: updateGeneralEnvironmentConfiguration
       requestBody:
@@ -621,6 +621,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        environmentVariables:
+          type: object
+          properties:
+            envKey:
+              type: string
 
     RepositoryPostBody:
       type: object
@@ -643,6 +648,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        environmentVariables:
+          type: object
+          properties:
+            envKey:
+              type: string
     
     RepositoryPutBody:
       type: object
@@ -661,10 +671,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        environmentVariables:
+          type: object
+          properties:
+            envKey:
+              type: string
 
     Environment:
       type: object
       properties:
+        repository:
+          type: string
         branch:
           type: string
         creationDate:
@@ -690,6 +707,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        environmentVariables:
+          type: object
+          properties:
+            envKey:
+              type: string
+            
     EnvironmentStatus:
       type: object
       properties:
@@ -709,6 +732,7 @@ components:
             - ready
             - deploying
             - deployment-failed
+  
     EnvironmentPostBody:
       type: object
       required:
@@ -724,6 +748,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        environmentVariables:
+          type: object
+          properties:
+            envKey:
+              type: string
+            
     EnvironmentPutBody:
       type: object
       properties:
@@ -735,6 +765,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        environmentVariables:
+          type: object
+          properties:
+            envKey:
+              type: string
 
     EnvironmentSingleConfiguration:
       type: object
@@ -747,6 +782,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        environmentVariables:
+          type: object
+          properties:
+            envKey:
+              type: string
+            
     TimeSchedule:
       type: object
       required:
