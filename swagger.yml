@@ -25,23 +25,6 @@ paths:
         - environment-status
       summary: Get all environments with status related informations
       operationId: getAllStatus
-      parameters:
-        - in: query
-          name: state
-          description: pass an optional state string to filter the results
-          required: false
-          schema:
-            type: string
-            enum:
-              - running
-              - stopped
-              - destroying
-              - destroyed
-              - destroying-failed
-              - pending
-              - ready
-              - deploying
-              - deployment-failed
       responses:
         '200':
           description: state results matching the query
