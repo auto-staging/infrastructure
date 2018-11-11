@@ -591,6 +591,33 @@ paths:
             statusCode: '400'
           INT.*:
             statusCode: '500'
+            
+  '/webhooks/github':
+    post:
+      tags:
+        - webhooks
+      summary: Create, trigger and delete environments through GitHub webhooks
+      description: For more information about the request body check (https://developer.github.com/v3/activity/events/types/). Supported events are create, delete and push.
+      operationId: githubWebhook
+          
+      responses:
+        '200':
+          description: success
+        '400':
+          description: bad input parameter
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
+        httpMethod: POST
+        responses:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+  
 components:
   schemas:
     TowerConfiguration:
