@@ -27,7 +27,7 @@ paths:
       operationId: getAllStatus
       responses:
         '200':
-          description: state results matching the query
+          description: status results matching the query
           content:
             application/json:
               schema:
@@ -467,7 +467,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Name of the environment to get the configuration and state for
+          description: Name of the environment to get the configuration and status for
       responses:
         '200':
           description: environment configuration and status information
@@ -697,7 +697,7 @@ components:
         creationDate:
           type: string
           format: int32
-        state:
+        status:
           type: string
           enum:
             - running
@@ -730,7 +730,7 @@ components:
           type: string
         branch:
           type: string
-        state:
+        status:
           type: string
           enum:
             - running
