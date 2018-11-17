@@ -15,7 +15,8 @@ resource "aws_lambda_function" "lambda" {
 
   environment = {
     variables = {
-      CONFIGURATION_LOG_LEVEL = 3
+      CONFIGURATION_LOG_LEVEL = 4
+      WEBHOOK_SECRET_TOKEN    = "il5tpYMOHfnCX8O7bqBLjznpc8lzgkI2EhSNwluLM7"
     }
   }
 }
@@ -56,7 +57,8 @@ resource "aws_iam_policy" "lambda_execution" {
            "logs:CreateLogStream",
            "logs:PutLogEvents",
            "dynamodb:*",
-           "lambda:UpdateFunctionConfiguration"
+           "lambda:UpdateFunctionConfiguration",
+           "lambda:InvokeFunction"
            ],
            "Resource": "*"
        }
