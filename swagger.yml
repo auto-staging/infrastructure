@@ -617,6 +617,8 @@ components:
       properties:
         repository:
           type: string
+        infrastructureRepoURL:
+          type: string
         webhook:
           type: boolean
         filters:
@@ -641,8 +643,11 @@ components:
       type: object
       required:
         - repository
+        - infrastructureRepoURL
       properties:
         repository:
+          type: string
+        infrastructureRepoURL:
           type: string
         webhook:
           type: boolean
@@ -666,7 +671,11 @@ components:
     
     RepositoryPutBody:
       type: object
+      required:
+        - infrastructureRepoURL
       properties:
+        infrastructureRepoURL:
+          type: string
         webhook:
           type: boolean
         filters:
@@ -693,6 +702,8 @@ components:
         repository:
           type: string
         branch:
+          type: string
+        infrastructureRepoURL:
           type: string
         creationDate:
           type: string
@@ -750,6 +761,8 @@ components:
       properties:
         branch:
           type: string
+        infrastructureRepoURL:
+          type: string
         shutdownSchedules:
           type: array
           items:
@@ -767,6 +780,8 @@ components:
     EnvironmentPutBody:
       type: object
       properties:
+        infrastructureRepoURL:
+          type: string
         shutdownSchedules:
           type: array
           items:
