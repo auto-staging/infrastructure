@@ -1,6 +1,6 @@
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/go-src/bin/"
+  source_dir  = "${path.module}/go-tower/bin/"
   output_path = "${path.module}/auto-staging-tower.zip"
 }
 
