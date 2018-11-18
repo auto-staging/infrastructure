@@ -1,20 +1,37 @@
-# Auto Staging Tower Infrastructure
+# Auto Staging Infrastructure
 
 ## Requirements
 
 - Terraform
 - Configured AWS CLI
 
+## Folder structure
+
+Builder -> All Builder related infrastructure:
+
+- TODO List
+
+Tower -> All Tower related infrastructure:
+
+- TODO List
+
 ## Setup
 
-### Build code for Lambda
+### Deploy Tower-Lambda
 
 ```bash
-cd go-src
-go build -o tower
+cd tower
+make deploy
 ```
 
-### Configure infrastructure
+### Deploy Builder-Lambda
+
+```bash
+cd builder
+make deploy
+```
+
+### Create / Update infrastructure
 
 ```bash
 terraform apply
