@@ -25,6 +25,8 @@ paths:
         - environment-status
       summary: Get all environments with status related informations
       operationId: getAllStatus
+      security:
+        - AwsSignature: []
       responses:
         '200':
           description: status results matching the query
@@ -55,6 +57,8 @@ paths:
         - environment-status
       summary: Get the status related informations for a single environment
       operationId: getSingleStatus
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -96,6 +100,8 @@ paths:
         - tower-configuration
       summary: Get the current Tower configuration
       operationId: getTowerConfiguration
+      security:
+        - AwsSignature: []
       responses:
         '200':
           description: current configuration
@@ -120,6 +126,8 @@ paths:
         - tower-configuration
       summary: Update the Tower configuration
       operationId: updateTowerConfiguration
+      security:
+        - AwsSignature: []
       responses:
         '200':
           description: current configuration
@@ -156,6 +164,8 @@ paths:
         - environment-global-config
       summary: 'Get the current default configuration for all environments of all repositories, will be overwritten by environment specific configuration'
       operationId: getGeneralEnvironmentConfiguration
+      security:
+        - AwsSignature: []
       responses:
         '200':
           description: current default configuration
@@ -180,6 +190,8 @@ paths:
         - environment-global-config
       summary: Update the general configuration for all environments of all repositories
       operationId: updateGeneralEnvironmentConfiguration
+      security:
+        - AwsSignature: []
       requestBody:
         required: true
         content:
@@ -215,6 +227,8 @@ paths:
         - repositories
       summary: Get all repositories configured in auto-staging
       operationId: getAllRepositoryConfigurations
+      security:
+        - AwsSignature: []
       responses:
         '200':
           description: all repositories configured in auto-staging
@@ -241,6 +255,8 @@ paths:
         - repositories
       summary: Add repository for auto-staging
       operationId: addRepositoryConfiguration
+      security:
+        - AwsSignature: []
       responses:
         '201':
           description: new repository added
@@ -275,6 +291,8 @@ paths:
         - repositories
       summary: Get a repository with its configuration 
       operationId: getSingleRepositoryConfiguration
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -308,6 +326,8 @@ paths:
         - repositories
       summary: Update single repository configuration
       operationId: updateSingleRepositoryConfiguration
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -348,6 +368,8 @@ paths:
         - repositories
       summary: Delete single repository and all included environments
       operationId: deleteSingleRepositoryConfiguration
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -379,6 +401,8 @@ paths:
         - environment
       summary: Get all environments configured for the repository
       operationId: getAllEnvironmentsForRepository
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -414,6 +438,8 @@ paths:
         - environment
       summary: Manually add environment for auto-staging
       operationId: addEnvironmentForRepository
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -455,6 +481,8 @@ paths:
         - environment
       summary: Get a single environments with config and status related informations
       operationId: getSingleEnvironmentConfiguration
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -494,6 +522,8 @@ paths:
         - environment
       summary: Update the configuration for a single environment
       operationId: updateSingleEnvironmentConfiguration
+      security:
+        - AwsSignature: []
       parameters:
         - in: path
           name: name
@@ -541,6 +571,8 @@ paths:
         - environment
       summary: Delete a single environment
       operationId: deleteSingleEnvironmentConfiguration
+      security:
+        - AwsSignature: []
       description: |
         By passing in the appropriate options, you can search for
         available inventory in the system
@@ -602,6 +634,13 @@ paths:
             statusCode: '500'
   
 components:
+  securitySchemes:
+    AwsSignature:
+      type: "apiKey"
+      name: "Authorization"
+      in: "header"
+      x-amazon-apigateway-authtype: "awsSigv4"
+
   schemas:
     TowerConfiguration:
       type: object
