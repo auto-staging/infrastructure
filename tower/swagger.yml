@@ -197,7 +197,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentPutBody'
+              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
       responses:
         '200':
           description: default configuration after update
@@ -672,11 +672,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        codeBuildRoleARN:
+          type: string
         environmentVariables:
-          type: object
-          properties:
-            envKey:
-              type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariable'
+              
+    EnvironmentVariable:
+      type: object
+      properties:
+        name:
+          type: string
+        type: 
+          type: string
+          enum:
+            - PLAINTEXT
+            - PARAMETER_STORE
+        value:
+          type: string
 
     RepositoryPostBody:
       type: object
@@ -702,16 +716,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        codeBuildRoleARN:
+          type: string
         environmentVariables:
-          type: object
-          properties:
-            envKey:
-              type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariable'
     
     RepositoryPutBody:
       type: object
       required:
         - infrastructureRepoURL
+        - codeBuildRoleARN
       properties:
         infrastructureRepoURL:
           type: string
@@ -729,11 +745,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        codeBuildRoleARN:
+          type: string
         environmentVariables:
-          type: object
-          properties:
-            envKey:
-              type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariable'
 
     Environment:
       type: object
@@ -767,11 +784,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        codeBuildRoleARN:
+          type: string
         environmentVariables:
-          type: object
-          properties:
-            envKey:
-              type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariable'
             
     EnvironmentStatus:
       type: object
@@ -810,16 +828,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        codeBuildRoleARN:
+          type: string
         environmentVariables:
-          type: object
-          properties:
-            envKey:
-              type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariable'
             
     EnvironmentPutBody:
       type: object
       required:
         - infrastructureRepoURL
+        - codeBuildRoleARN
       properties:
         infrastructureRepoURL:
           type: string
@@ -831,11 +851,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        codeBuildRoleARN:
+          type: string
         environmentVariables:
-          type: object
-          properties:
-            envKey:
-              type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariable'
 
     EnvironmentSingleConfiguration:
       type: object
@@ -848,11 +869,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
+        codeBuildRoleARN:
+          type: string
         environmentVariables:
-          type: object
-          properties:
-            envKey:
-              type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariable'
             
     TimeSchedule:
       type: object
