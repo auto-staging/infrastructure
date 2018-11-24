@@ -172,7 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                $ref: '#/components/schemas/GeneralConfiguration'
       x-amazon-apigateway-integration:
         type: aws_proxy
         uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
@@ -197,14 +197,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+              $ref: '#/components/schemas/GeneralConfiguration'
       responses:
         '200':
           description: default configuration after update
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvironmentSingleConfiguration'
+                $ref: '#/components/schemas/GeneralConfiguration'
         '400':
           description: bad input parameter
       x-amazon-apigateway-request-validator: "Validate body, query string parameters, and headers"
@@ -697,6 +697,7 @@ components:
       required:
         - repository
         - infrastructureRepoURL
+        - codeBuildRoleARN
       properties:
         repository:
           type: string
@@ -858,7 +859,7 @@ components:
           items:
             $ref: '#/components/schemas/EnvironmentVariable'
 
-    EnvironmentSingleConfiguration:
+    GeneralConfiguration:
       type: object
       properties:
         shutdownSchedules:
@@ -869,8 +870,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TimeSchedule'
-        codeBuildRoleARN:
-          type: string
         environmentVariables:
           type: array
           items:
