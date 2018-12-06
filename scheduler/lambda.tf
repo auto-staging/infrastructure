@@ -14,6 +14,15 @@ resource "aws_lambda_function" "lambda" {
   timeout          = 300
 }
 
+resource "aws_lambda_permission" "cloudwatch_events" {
+  statement_id  = "AllowCloudWatchEventsInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.lambda.arn}"
+  principal     = "events.amazonaws.com"
+
+  source_arn = "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/*"
+}
+
 resource "aws_iam_role_policy_attachment" "policy_attachment" {
   role       = "${aws_iam_role.lambda_exec_role.name}"
   policy_arn = "${aws_iam_policy.lambda_execution.arn}"

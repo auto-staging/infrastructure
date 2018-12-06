@@ -15,7 +15,8 @@ resource "aws_lambda_function" "lambda" {
 
   environment = {
     variables = {
-      CONFIGURATION_LOG_LEVEL = 4
+      CONFIGURATION_LOG_LEVEL        = 4
+      CLOUDWATCH_TO_LAMBDA_EXEC_ROLE = "${aws_iam_role.cloudwatch_event_exec_role.arn}"
     }
   }
 }
@@ -58,7 +59,14 @@ resource "aws_iam_policy" "lambda_execution" {
            "codebuild:*",
            "iam:PassRole",
            "dynamodb:UpdateItem",
-           "dynamodb:DeleteItem"
+           "dynamodb:DeleteItem",
+           "events:ListRules",
+           "events:DeleteRule",
+           "events:PutRule",
+           "events:ListTargetsByRule",
+           "events:RemoveTargets",
+           "events:PutTargets",
+           "*"
            ],
            "Resource": "*"
        }
