@@ -64,7 +64,8 @@ resource "aws_iam_policy" "lambda_execution" {
            "rds:DescribeDBClusters",
            "rds:ListTagsForResource",
            "rds:StartDBCluster",
-           "rds:StopDBCluster"
+           "rds:StopDBCluster",
+           "dynamodb:UpdateItem"
            ],
            "Resource": "*"
        }
