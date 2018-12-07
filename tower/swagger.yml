@@ -632,6 +632,38 @@ paths:
             statusCode: '400'
           INT.*:
             statusCode: '500'
+            
+  '/triggers/schedule':
+    post:
+      tags:
+        - triggers
+      summary: Manually start and stop environments
+      description: Manually start and stop environments through the REST endpoint
+      operationId: triggerSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerSchedulePost'
+          
+      responses:
+        '200':
+          description: success
+        '400':
+          description: bad input parameter
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
+        httpMethod: POST
+        responses:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
   
 components:
   securitySchemes:
@@ -874,6 +906,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EnvironmentVariable'
+            
+    TriggerSchedulePost:
+      type: object
+      required:
+        - branch
+        - repository
+        - action
+      properties:
+        repository:
+          type: string
+        branch:
+          type: string
+        action:
+          type: string
+          enum:
+            - start
+            - stop
+        
+      
             
     TimeSchedule:
       type: object
