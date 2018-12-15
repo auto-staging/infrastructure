@@ -27,7 +27,7 @@ resource "aws_iam_role_policy_attachment" "CloudWatchLogFullAccess" {
 }
 
 resource "aws_iam_role" "lambda_exec_role" {
-  name = "auto-staging-test-lambda-exec-role"
+  name = "auto-staging-tower-lambda-exec-role"
 
   assume_role_policy = "${data.aws_iam_policy_document.instance-assume-role-policy.json}"
 }
@@ -56,7 +56,11 @@ resource "aws_iam_policy" "lambda_execution" {
            "logs:CreateLogGroup",
            "logs:CreateLogStream",
            "logs:PutLogEvents",
-           "dynamodb:*",
+           "dynamodb:Scan",
+           "dynamodb:Query",
+           "dynamodb:GetItem",
+           "dynamodb:UpdateItem",
+           "dynamodb:DeleteItem",
            "lambda:UpdateFunctionConfiguration",
            "lambda:InvokeFunction"
            ],
