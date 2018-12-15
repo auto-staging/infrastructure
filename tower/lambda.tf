@@ -46,6 +46,8 @@ data "aws_iam_policy_document" "instance-assume-role-policy" {
 }
 
 resource "aws_iam_policy" "lambda_execution" {
+  name = "auto-staging-tower-lambda-policy"
+
   policy = <<POLICY
 {
    "Version": "2012-10-17",
@@ -53,18 +55,43 @@ resource "aws_iam_policy" "lambda_execution" {
        {
            "Effect": "Allow",
            "Action": [
-           "logs:CreateLogGroup",
-           "logs:CreateLogStream",
-           "logs:PutLogEvents",
-           "dynamodb:Scan",
-           "dynamodb:Query",
-           "dynamodb:GetItem",
-           "dynamodb:UpdateItem",
-           "dynamodb:DeleteItem",
-           "lambda:UpdateFunctionConfiguration",
-           "lambda:InvokeFunction"
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
            ],
            "Resource": "*"
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+            "lambda:UpdateFunctionConfiguration"
+           ],
+           "Resource": "${aws_lambda_function.lambda.arn}"
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+            "lambda:InvokeFunction"
+           ],
+           "Resource": [
+             "arn:aws:lambda:eu-central-1:${data.aws_caller_identity.current.account_id}:function:auto-staging-builder",
+             "arn:aws:lambda:eu-central-1:${data.aws_caller_identity.current.account_id}:function:auto-staging-scheduler"
+           ]
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+            "dynamodb:Scan",
+            "dynamodb:Query",
+            "dynamodb:GetItem",
+            "dynamodb:UpdateItem",
+            "dynamodb:DeleteItem"
+           ],
+           "Resource": [
+             "${aws_dynamodb_table.environments.arn}",
+             "${aws_dynamodb_table.global_config.arn}",
+             "${aws_dynamodb_table.repositories.arn}"
+           ]
        }
    ]
 }
