@@ -20,7 +20,7 @@ resource "aws_lambda_permission" "cloudwatch_events" {
   function_name = "${aws_lambda_function.lambda.arn}"
   principal     = "events.amazonaws.com"
 
-  source_arn = "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/*"
+  source_arn = "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/as-*"
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attachment" {
@@ -64,12 +64,17 @@ resource "aws_iam_policy" "lambda_execution" {
            "rds:DescribeDBClusters",
            "rds:ListTagsForResource",
            "rds:StartDBCluster",
-           "rds:StopDBCluster",
-           "dynamodb:UpdateItem"
+           "rds:StopDBCluster"
            ],
            "Resource": "*"
-       }
-   ]
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+           "dynamodb:UpdateItem"
+           ],
+           "Resource": "${data.aws_dynamodb_table.environments.arn}"
+       }   ]
 }
 POLICY
 }
