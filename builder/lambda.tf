@@ -53,23 +53,45 @@ resource "aws_iam_policy" "lambda_execution" {
        {
            "Effect": "Allow",
            "Action": [
-           "logs:CreateLogGroup",
-           "logs:CreateLogStream",
-           "logs:PutLogEvents",
-           "codebuild:*",
-           "iam:PassRole",
-           "dynamodb:UpdateItem",
-           "dynamodb:DeleteItem",
-           "events:ListRules",
-           "events:DeleteRule",
-           "events:PutRule",
-           "events:ListTargetsByRule",
-           "events:RemoveTargets",
-           "events:PutTargets",
-           "*"
+              "logs:CreateLogGroup",
+              "logs:CreateLogStream",
+              "logs:PutLogEvents",
+              "codebuild:CreateProject",
+              "codebuild:DeleteProject",
+              "codebuild:StartBuild",
+              "codebuild:UpdateProject",
+              "codebuild:BatchGetProjects",
+              "iam:PassRole"
            ],
            "Resource": "*"
-       }
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+              "events:DeleteRule",
+              "events:ListTargetsByRule",
+              "events:RemoveTargets",
+              "events:PutTargets"
+           ],
+           "Resource": "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/as-*"
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+              "events:ListRules",
+              "events:PutRule"
+           ],
+           "Resource": "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/*"
+       }, 
+       {
+           "Effect": "Allow",
+           "Action": [
+              "dynamodb:GetItem",
+              "dynamodb:UpdateItem",
+              "dynamodb:DeleteItem"
+           ],
+           "Resource": "${data.aws_dynamodb_table.environments.arn}"
+       }  
    ]
 }
 POLICY
