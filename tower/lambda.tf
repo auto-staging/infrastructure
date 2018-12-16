@@ -85,7 +85,8 @@ resource "aws_iam_policy" "lambda_execution" {
             "dynamodb:Query",
             "dynamodb:GetItem",
             "dynamodb:UpdateItem",
-            "dynamodb:DeleteItem"
+            "dynamodb:DeleteItem",
+            "dynamodb:PutItem"
            ],
            "Resource": [
              "${aws_dynamodb_table.environments.arn}",
