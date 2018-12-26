@@ -5,17 +5,23 @@
 - Terraform
 - Configured AWS CLI
 
-## Folder structure
-
-Builder -> All Builder related infrastructure:
-
-- TODO List
-
-Tower -> All Tower related infrastructure:
-
-- TODO List
-
 ## Setup
+
+### Checkout Lambda code repositories to $GOPATH/src/gitlab.com/auto-staging
+
+```bash
+cd $GOPATH/src/gitlab.com/auto-staging
+
+git clone git@gitlab.com:auto-staging/scheduler.git
+git clone git@gitlab.com:auto-staging/builder.git
+git clone git@gitlab.com:auto-staging/tower.git
+```
+
+### Create Symlinks for Lambda go
+
+```bash
+make symlinks
+```
 
 ### Deploy Tower-Lambda
 
@@ -31,14 +37,15 @@ cd builder
 make deploy
 ```
 
-### Create / Update infrastructure
+### Deploy Scheduler-Lambda
 
 ```bash
-terraform apply
+cd scheduler
+make deploy
 ```
 
-### Remove infrastructure
+## License and Author
 
-```bash
-terraform destroy
-```
+Author: Jan Ritter
+
+License: MIT
