@@ -5,17 +5,19 @@
 - Terraform
 - Configured AWS CLI
 
-## Setup
+## Setup Auto Staging
 
-### Checkout Lambda code repositories to $GOPATH/src/gitlab.com/auto-staging
+### Checkout Lambda code repositories to $GOPATH/src/github.com/auto-staging
 
 ```bash
-cd $GOPATH/src/gitlab.com/auto-staging
+cd $GOPATH/src/github.com/auto-staging
 
-git clone git@gitlab.com:auto-staging/scheduler.git
-git clone git@gitlab.com:auto-staging/builder.git
-git clone git@gitlab.com:auto-staging/tower.git
+git clone git@github.com:auto-staging/scheduler.git
+git clone git@github.com:auto-staging/builder.git
+git clone git@github.com:auto-staging/tower.git
 ```
+
+:warning: **You have to deploy the different auto-staging modules in the order listed below.**
 
 ### Create Symlinks for Lambda go
 
@@ -43,6 +45,26 @@ make deploy
 cd scheduler
 make deploy
 ```
+
+### Auto Staging infrastructure overview
+
+![topology](docs/topology.png)
+
+The Terraform files in the tower subdirectory create the following resources:
+
+- API Gateway
+- Tower Lambda function
+- "repositories", "repositories global-config" and "environments" DynamoDB Tables
+
+The Terraform files in the builder subdirectory create the following resources:
+
+- Builder Lambda function
+
+The Terraform files in the scheduler subdirectory create the following resources:
+
+- Scheduler Lambda function
+
+CodeBuild Jobs and CloudWatchEvents rules are created dynamicly at runtime by the Builder.
 
 ## License and Author
 
