@@ -15,7 +15,7 @@ resource "aws_lambda_function" "lambda" {
 
   environment = {
     variables = {
-      CONFIGURATION_LOG_LEVEL        = 4
+      CONFIGURATION_LOG_LEVEL        = "${var.log_level}"
       CLOUDWATCH_TO_LAMBDA_EXEC_ROLE = "${aws_iam_role.cloudwatch_event_exec_role.arn}"
     }
   }

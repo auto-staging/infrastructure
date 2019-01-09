@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "gateway" {
-  name        = "Auto Staging Tower API"
+  name = "Auto Staging Tower API"
 
   body = "${data.template_file.openapi.rendered}"
 
@@ -12,14 +12,14 @@ data "template_file" "openapi" {
   template = "${file("swagger.yml")}"
 
   vars {
-    tower_lambda_arn = "${aws_lambda_function.lambda.arn}"
+    tower_lambda_arn                = "${aws_lambda_function.lambda.arn}"
     tower_lambda_execution_role_arn = "${aws_iam_role.api_exec_role.arn}"
   }
 }
 
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-  stage_name  = "test"
+  stage_name  = "v1"
 }
 
 resource "aws_lambda_permission" "apigw" {
@@ -34,7 +34,7 @@ resource "aws_lambda_permission" "apigw" {
 }
 
 resource "aws_iam_role" "api_exec_role" {
-  name = "auto-staging-test-api-gateway-exec-role"
+  name = "auto-staging-v1-api-gateway-exec-role"
 
   assume_role_policy = "${data.aws_iam_policy_document.api-assume-role-policy.json}"
 }
