@@ -7,7 +7,7 @@
 
 ## Setup Auto Staging
 
-### Checkout Lambda code repositories to $GOPATH/src/github.com/auto-staging
+### 1. Checkout Lambda code repositories to $GOPATH/src/github.com/auto-staging
 
 ```bash
 cd $GOPATH/src/github.com/auto-staging
@@ -17,29 +17,31 @@ git clone git@github.com:auto-staging/builder.git
 git clone git@github.com:auto-staging/tower.git
 ```
 
+### 2. Adapt the variables in the vars.tfvars file
+
 :warning: **You have to deploy the different auto-staging modules in the order listed below.**
 
-### Create Symlinks for Lambda go
+### 3. Create Symlinks for Lambda go
 
 ```bash
 make symlinks
 ```
 
-### Deploy Tower-Lambda
+### 4. Deploy Tower-Lambda
 
 ```bash
 cd tower
 make deploy
 ```
 
-### Deploy Builder-Lambda
+### 5. Deploy Builder-Lambda
 
 ```bash
 cd builder
 make deploy
 ```
 
-### Deploy Scheduler-Lambda
+### 6. Deploy Scheduler-Lambda
 
 ```bash
 cd scheduler

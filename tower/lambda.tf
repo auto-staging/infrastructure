@@ -15,8 +15,8 @@ resource "aws_lambda_function" "lambda" {
 
   environment = {
     variables = {
-      CONFIGURATION_LOG_LEVEL = 4
-      WEBHOOK_SECRET_TOKEN    = "il5tpYMOHfnCX8O7bqBLjznpc8lzgkI2EhSNwluLM7"
+      CONFIGURATION_LOG_LEVEL = "${var.log_level}"
+      WEBHOOK_SECRET_TOKEN    = "${var.webhook_secret_token}"
     }
   }
 }

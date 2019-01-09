@@ -2,4 +2,4 @@ deploy:
 	cd go-builder && \
 	go build -o ./bin/auto-staging-builder -v && \
 	cd .. && \
-	terraform apply --auto-approve
+	terraform apply --auto-approve  --var-file=../vars.tfvars
