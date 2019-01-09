@@ -19,13 +19,13 @@ git clone git@github.com:auto-staging/tower.git
 
 ### 2. Adapt the variables in the vars.tfvars file
 
-:warning: **You have to deploy the different auto-staging modules in the order listed below.**
-
 ### 3. Create Symlinks for Lambda go
 
 ```bash
 make symlinks
 ```
+
+:warning: **You have to deploy the different auto-staging modules in the order listed below.**
 
 ### 4. Deploy Tower-Lambda
 
