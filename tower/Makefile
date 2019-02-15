@@ -1,5 +1,3 @@
 deploy:
-	cd go-tower && \
-	go build -o ./bin/auto-staging-tower -v && \
-	cd .. && \
+	cd ~/go/src/github.com/auto-staging/tower && make build
 	terraform apply --auto-approve  --var-file=../vars.tfvars

@@ -1,5 +1,3 @@
 deploy:
-	cd go-scheduler && \
-	go build -o ./bin/auto-staging-scheduler -v && \
-	cd .. && \
-	terraform apply --auto-approve
+	cd ~/go/src/github.com/auto-staging/scheduler && make build
+	terraform apply --auto-approve  --var-file=../vars.tfvars
