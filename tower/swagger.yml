@@ -682,6 +682,8 @@ components:
           format: int
           minimum: 1
           maximum: 4
+        webhookSecretToken:
+          type: string
 
     Repository:
       type: object
@@ -923,8 +925,6 @@ components:
           enum:
             - start
             - stop
-        
-      
             
     TimeSchedule:
       type: object
