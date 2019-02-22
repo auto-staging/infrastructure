@@ -20,7 +20,7 @@ resource "aws_lambda_permission" "cloudwatch_events" {
   function_name = "${aws_lambda_function.lambda.arn}"
   principal     = "events.amazonaws.com"
 
-  source_arn = "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/as-*"
+  source_arn = "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/as-*"
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attachment" {
@@ -50,31 +50,32 @@ data "aws_iam_policy_document" "instance-assume-role-policy" {
 resource "aws_iam_policy" "lambda_execution" {
   policy = <<POLICY
 {
-   "Version": "2012-10-17",
-   "Statement": [
-       {
-           "Effect": "Allow",
-           "Action": [
-           "logs:CreateLogGroup",
-           "logs:CreateLogStream",
-           "logs:PutLogEvents",
-           "ec2:DescribeInstances",
-           "ec2:StartInstances",
-           "ec2:StopInstances",
-           "rds:DescribeDBClusters",
-           "rds:ListTagsForResource",
-           "rds:StartDBCluster",
-           "rds:StopDBCluster"
-           ],
-           "Resource": "*"
-       },
-       {
-           "Effect": "Allow",
-           "Action": [
-           "dynamodb:UpdateItem"
-           ],
-           "Resource": "${data.aws_dynamodb_table.environments.arn}"
-       }   ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "ec2:DescribeInstances",
+                "ec2:StartInstances",
+                "ec2:StopInstances",
+                "rds:DescribeDBClusters",
+                "rds:ListTagsForResource",
+                "rds:StartDBCluster",
+                "rds:StopDBCluster"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:UpdateItem"
+            ],
+            "Resource": "${data.aws_dynamodb_table.environments.arn}"
+        }
+    ]
 }
 POLICY
 }

@@ -50,51 +50,51 @@ resource "aws_iam_policy" "lambda_execution" {
 
   policy = <<POLICY
 {
-   "Version": "2012-10-17",
-   "Statement": [
-       {
-           "Effect": "Allow",
-           "Action": [
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
-           ],
-           "Resource": "*"
-       },
-       {
-           "Effect": "Allow",
-           "Action": [
-            "lambda:UpdateFunctionConfiguration"
-           ],
-           "Resource": "${aws_lambda_function.lambda.arn}"
-       },
-       {
-           "Effect": "Allow",
-           "Action": [
-            "lambda:InvokeFunction"
-           ],
-           "Resource": [
-             "arn:aws:lambda:eu-central-1:${data.aws_caller_identity.current.account_id}:function:auto-staging-builder",
-             "arn:aws:lambda:eu-central-1:${data.aws_caller_identity.current.account_id}:function:auto-staging-scheduler"
-           ]
-       },
-       {
-           "Effect": "Allow",
-           "Action": [
-            "dynamodb:Scan",
-            "dynamodb:Query",
-            "dynamodb:GetItem",
-            "dynamodb:UpdateItem",
-            "dynamodb:DeleteItem",
-            "dynamodb:PutItem"
-           ],
-           "Resource": [
-             "${aws_dynamodb_table.environments.arn}",
-             "${aws_dynamodb_table.global_config.arn}",
-             "${aws_dynamodb_table.repositories.arn}"
-           ]
-       }
-   ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "lambda:UpdateFunctionConfiguration"
+            ],
+            "Resource": "${aws_lambda_function.lambda.arn}"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "lambda:InvokeFunction"
+            ],
+            "Resource": [
+                "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:auto-staging-builder",
+                "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:auto-staging-scheduler"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:PutItem"
+            ],
+            "Resource": [
+                "${aws_dynamodb_table.environments.arn}",
+                "${aws_dynamodb_table.global_config.arn}",
+                "${aws_dynamodb_table.repositories.arn}"
+            ]
+        }
+    ]
 }
 POLICY
 }
