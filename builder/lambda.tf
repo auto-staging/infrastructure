@@ -17,7 +17,7 @@ resource "aws_lambda_function" "lambda" {
     variables = {
       CONFIGURATION_LOG_LEVEL        = "${var.log_level}"
       CLOUDWATCH_TO_LAMBDA_EXEC_ROLE = "${aws_iam_role.cloudwatch_event_exec_role.arn}"
-      SCHEDULER_LAMBDA_ARN           = "arn:aws:lambda:eu-central-1:${data.aws_caller_identity.current.account_id}:function:auto-staging-scheduler"
+      SCHEDULER_LAMBDA_ARN           = "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:auto-staging-scheduler"
     }
   }
 }

@@ -1,15 +1,15 @@
 resource "aws_iam_role" "cloudwatch_event_exec_role" {
-  name = "auto-staging-scheduler-cloudwatch-event-exec-role"
+  name = "auto-staging-scheduler-cloudwatch-events-exec-role"
 
-  assume_role_policy = "${data.aws_iam_policy_document.cloudwatch_event_assume_role_policy.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.cloudwatch_events_assume_role_policy.json}"
 }
 
-resource "aws_iam_role_policy_attachment" "cloudwatch_event_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "cloudwatch_events_policy_attachment" {
   role       = "${aws_iam_role.cloudwatch_event_exec_role.name}"
-  policy_arn = "${aws_iam_policy.cloudwatch_event_execution.arn}"
+  policy_arn = "${aws_iam_policy.cloudwatch_events_execution.arn}"
 }
 
-data "aws_iam_policy_document" "cloudwatch_event_assume_role_policy" {
+data "aws_iam_policy_document" "cloudwatch_events_assume_role_policy" {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "cloudwatch_event_assume_role_policy" {
   }
 }
 
-resource "aws_iam_policy" "cloudwatch_event_execution" {
+resource "aws_iam_policy" "cloudwatch_events_execution" {
   policy = <<POLICY
 {
    "Version": "2012-10-17",
@@ -30,9 +30,9 @@ resource "aws_iam_policy" "cloudwatch_event_execution" {
        {
            "Effect": "Allow",
            "Action": [
-           "lambda:InvokeFunction"
+              "lambda:InvokeFunction"
            ],
-           "Resource": "*"
+           "Resource": "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:function:auto-staging-scheduler"
        }
    ]
 }
