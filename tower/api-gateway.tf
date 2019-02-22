@@ -60,19 +60,19 @@ data "aws_iam_policy_document" "api-assume-role-policy" {
 resource "aws_iam_policy" "api_execution" {
   policy = <<POLICY
 {
-   "Version": "2012-10-17",
-   "Statement": [
-       {
-           "Effect": "Allow",
-           "Action": [
-           "logs:CreateLogGroup",
-           "logs:CreateLogStream",
-           "logs:PutLogEvents",
-           "lambda:InvokeFunction"
-           ],
-           "Resource": "*"
-       }
-   ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "lambda:InvokeFunction"
+            ],
+            "Resource": "*"
+        }
+    ]
 }
 POLICY
 }

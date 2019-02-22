@@ -74,7 +74,7 @@ resource "aws_iam_policy" "lambda_execution" {
               "events:RemoveTargets",
               "events:PutTargets"
            ],
-           "Resource": "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/as-*"
+           "Resource": "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/as-*"
        },
        {
            "Effect": "Allow",
@@ -82,7 +82,7 @@ resource "aws_iam_policy" "lambda_execution" {
               "events:ListRules",
               "events:PutRule"
            ],
-           "Resource": "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/*"
+           "Resource": "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/*"
        }, 
        {
            "Effect": "Allow",
