@@ -4,6 +4,7 @@
 
 - Terraform
 - Configured AWS CLI
+- Golang
 
 ## Setup Auto Staging
 
@@ -25,7 +26,7 @@ git clone git@github.com:auto-staging/tower.git
 make symlinks
 ```
 
-:warning: **You have to deploy the different auto-staging modules in the order listed below.**
+:warning: **You have to deploy the different Auto Staging modules in the order listed below.**
 
 ### 4. Deploy Tower-Lambda
 
@@ -48,7 +49,7 @@ cd scheduler
 make deploy
 ```
 
-### Auto Staging infrastructure overview
+## Auto Staging infrastructure overview
 
 ![topology](docs/topology.png)
 
