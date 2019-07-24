@@ -1,14 +1,13 @@
 openapi: 3.0.0
 info:
-  description: auto-staging-tower API
-  version: 1.0.0
+  description: The API of the Auto Staging system.
+  version: "1.1.0"
   title: Auto Staging Tower API
-  contact:
-    email: you@your-company.com
   license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    name: MIT
 tags:
+  - name: version
+    description: Contains version information of all components in the Auto Staging system
   - name: tower-configuration
     description: Configuration of auto-staging
   - name: repositories
@@ -19,6 +18,36 @@ tags:
     description: Status of all staging environments
 
 paths:
+  /versions:
+    get:
+      tags:
+        - version
+      summary: Get all component versions
+      operationId: getAllVersions
+      security:
+        - AwsSignature: []
+      responses:
+        '200':
+          description: the versions of all Auto Staging components
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComponentVersions'
+        '502':
+          description: the tower component couldn't get the versions of the other Auto Staging components
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: 'arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${tower_lambda_arn}/invocations'
+        credentials: '${tower_lambda_execution_role_arn}'
+        httpMethod: POST
+        responses:
+          default:
+            statusCode: '200'
+          BAD.*:
+            statusCode: '400'
+          INT.*:
+            statusCode: '500'
+
   /repositories/environments/status:
     get:
       tags:
@@ -909,6 +938,28 @@ components:
           items:
             $ref: '#/components/schemas/EnvironmentVariable'
             
+    ComponentVersions:
+      type: object
+      properties:
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleComponentVersion'
+            
+    SingleComponentVersion:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        commitHash:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+            
     TriggerSchedulePost:
       type: object
       required:
@@ -925,6 +976,7 @@ components:
           enum:
             - start
             - stop
+      
             
     TimeSchedule:
       type: object
